@@ -1,158 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XION-X-PLAYER</title>
-<style>
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #1b1b1b;
-    color: #fff;
-    font-family: Arial, sans-serif;
-    margin: 0;
-  }
+## Simply Web Deploy
+Automatically deploy your projects to Simply.com or any other place that supports IIS with Web Deploy using this GitHub action. 
 
-  .player-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border: 2px solid #2196f3; /* Border color updated to blue */
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #2e2e2e;
-    transition: border-color 0.3s ease; /* Smooth transition */
-  }
+This action utilizes Microsoft’s own `Web Deploy 3.0+` executable, which you can read everything about [here](https://docs.microsoft.com/en-us/aspnet/web-forms/overview/deployment/web-deployment-in-the-enterprise/deploying-web-packages). Further documentation of the rules and parameters can also be seen [here](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-r2-and-2008/dd568992(v=ws.10)).
 
-  h1 {
-    margin-top: 0;
-    font-size: 24px;
-  }
+---
 
-  #file-input {
-    margin: 10px 0;
-    padding: 8px 12px;
-    color: #fff;
-    background-color: #2196f3; /* Choose file button background color */
-    border: 2px solid #2196f3; /* Choose file button border color */
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
+### Example
+Place the following in `/.github/workflows/main.yml`
+```yml
+name: Build project and deploy to Simply
+on: [push]
 
-  #file-input:focus {
-    outline: none;
-    border-color: #ffeb3b; /* Change border color on focus */
-    box-shadow: 0 0 10px #ffeb3b; /* Add glowing effect on focus */
-  }
+jobs:
+  build_and_deploy:
+    name: Build package and deploy to Simply
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
 
-  #audio-player {
-    margin: 20px 0;
-  }
+      - name: Deploy to Simply
+        uses: rasmusbuchholdt/simply-web-deploy@2.1.0
+        with:
+          website-name: ${{ secrets.WEBSITE_NAME }}
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}
+          server-username: ${{ secrets.SERVER_USERNAME }}
+          server-password: ${{ secrets.SERVER_PASSWORD }}
+          source-path: '\build\'
+          target-path: '/my-sub-directory/'
+```
 
-  #bars {
-    display: flex;
-    gap: 5px;
-    align-items: flex-end;
-  }
+---
 
-  .bar {
-    width: 5px;
-    background-color: #4caf50; /* Default bar color */
-    height: 20px; /* Minimum height */
-    transition: height 0.1s ease, background-color 0.2s ease;
-  }
-</style>
-</head>
-<body>
+### Requirements
+- Administrator access to the simply.com account, to access the required credentials.
 
-<div class="player-container" id="player-container">
-  <h1>XION-X-PLAYER</h1>
-  <label for="file-input" style="cursor: pointer;">Choose File</label>
-  <input type="file" id="file-input" accept="audio/*" style="display: none;">
-  <audio id="audio-player" controls></audio>
-  <div id="bars"></div>
-</div>
+---
 
-<script>
-  const audioPlayer = document.getElementById("audio-player");
-  const fileInput = document.getElementById("file-input");
-  const barsContainer = document.getElementById("bars");
-  const playerContainer = document.getElementById("player-container");
+### Setup
+1. Locate the repository you want to automate Simply web deployment in.
+2. Select the `Actions` tab.
+3. Select `Set up a workflow yourself`.
+4. Copy paste one of the examples into your .yml workflow file and commit the file.
+5. All the examples takes advantage of `Secrets`, so make sure you have added the required secrets to your repository. Instructions on this can be found in the [settings](#settings) section.
+6. Once you have added your secrets, your new workflow should be running on every push to the branch.
 
-  // Create 20 bars for the animation
-  for (let i = 0; i < 20; i++) {
-    const bar = document.createElement("div");
-    bar.classList.add("bar");
-    barsContainer.appendChild(bar);
-  }
+---
 
-  // Handle audio file selection
-  fileInput.addEventListener("change", function() {
-    const file = this.files[0];
-    if (file) {
-      audioPlayer.src = URL.createObjectURL(file);
-      audioPlayer.play();
-      initAudioAnalyzer();
-    }
-  });
+### Settings
+These settings can be either be added directly to your .yml config file or referenced from your GitHub repository `Secrets`. I strongly recommend storing any private values like `server-username` and `server-password` in `Secrets`, regardless of if the repository is private or not.
 
-  function initAudioAnalyzer() {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const analyzer = audioContext.createAnalyser();
-    const source = audioContext.createMediaElementSource(audioPlayer);
-    source.connect(analyzer);
-    analyzer.connect(audioContext.destination);
-    analyzer.fftSize = 256; // Increased fftSize for better frequency resolution
+To add a secret to your repository go to the `Settings` tab, followed by `Secrets`. Here you can add your secrets and reference to them in your .yml file.
 
-    const bufferLength = analyzer.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
+| Setting | Required | Example | Default Value | Description |
+|-|-|-|-|-|
+| `website-name`          | Yes | `sub.example.com` | | Deployment destination server |
+| `server-computer-name`  | Yes | `https://nt8.unoeuro.com:8172` | | Computer name, including the port - Find yours [here](https://www.simply.com/dk/support/faq/asp/236/)|
+| `server-username`       | Yes | `username`        | | Your Simply FTP username |
+| `server-password`       | Yes | `password`        | | Your Simply FTP password |
+| `source-path`           | No | `\my-build\dist\`  | `\publish\` | The path to the source directory that will be deployed |
+| `target-path`           | No | `/sub-directory/`  | `''` (Root of your website)  | The path where the source directory will be deployed (relative to website root) |
+| `target-delete`         | No | `true`             | `false` | Delete files on the target computer that do not exist on the source computer |
+| `skip-directory-path`   | No | `\\App_Data`       | `''` | Skip any operations on a specific directory |
+---
 
-    function animateBars() {
-      analyzer.getByteFrequencyData(dataArray);
+# Common examples
+#### Build and publish .NET Core API
 
-      const bars = document.querySelectorAll(".bar");
-      let averageVolume = 0;
+```yml
+name: Build, publish and deploy project to Simply
 
-      bars.forEach((bar, index) => {
-        // Reduced sensitivity by smoothing out the values
-        const scale = (dataArray[index] - 40) / 3; // Adjust the subtraction factor for less sensitivity
-        bar.style.height = `${Math.max(scale + 10, 10)}px`; // Ensure the minimum height is visible
-        averageVolume += scale;
-      });
+on: [push]
 
-      averageVolume = averageVolume / bars.length;
-      updateColorsBasedOnVolume(averageVolume);
+jobs:
+  build_and_deploy:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
 
-      requestAnimationFrame(animateBars);
-    }
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 3.1
 
-    animateBars();
-  }
+      - name: Install dependencies
+        run: dotnet restore
 
-  function updateColorsBasedOnVolume(volume) {
-    // Adjust color intensity based on the average volume
-    let color;
-    if (volume < 5) {
-      color = "#4caf50"; // Green for low volume
-    } else if (volume < 15) {
-      color = "#ffeb3b"; // Yellow for medium-low volume
-    } else if (volume < 30) {
-      color = "#ff9800"; // Orange for medium-high volume
-    } else {
-      color = "#f44336"; // Red for high volume
-    }
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
-    // Update border and bar colors
-    playerContainer.style.borderColor = color;
-    document.querySelectorAll(".bar").forEach(bar => {
-      bar.style.backgroundColor = color;
-    });
-  }
-</script>
+      - name: Publish
+        run: dotnet publish [YOUR_PROJECT_NAME]/[YOUR_PROJECT_NAME].csproj --configuration Release --framework netcoreapp3.1 --output ./publish --runtime win-x86 --self-contained true -p:PublishTrimmed=false -p:PublishSingleFile=false
 
-</body>
-</html>
+      - name: Test with .NET
+        run: dotnet test
+
+      - name: Deploy to Simply
+        uses: rasmusbuchholdt/simply-web-deploy@2.1.0
+        with:
+          website-name: ${{ secrets.WEBSITE_NAME }}
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}
+          server-username: ${{ secrets.SERVER_USERNAME }}
+          server-password: ${{ secrets.SERVER_PASSWORD }}
+```
+
+#### Build and publish Angular application
+
+```yml
+name: Build, publish and deploy project to Simply
+
+on: [push]
+
+jobs:
+  build_and_deploy:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Build application
+      - run: npm ci && ng build --configuration production --output-path=dist
+
+      - name: Deploy to Simply
+        uses: rasmusbuchholdt/simply-web-deploy@2.1.0
+        with:
+          website-name: ${{ secrets.WEBSITE_NAME }}
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}
+          server-username: ${{ secrets.SERVER_USERNAME }}
+          server-password: ${{ secrets.SERVER_PASSWORD }}
+          source-path: '\dist\'
+          target-delete: true
+```
