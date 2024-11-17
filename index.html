@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XionXalpha - Web & Game Solutions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2f;
+            color: #ffffff;
+        }
+        header {
+            position: relative;
+            background: linear-gradient(45deg, #1e1e2f, #3b4a66, #1e1e2f);
+            background-size: 600% 600%;
+            animation: gradientBG 10s ease infinite;
+            padding: 60px 20px;
+            text-align: center;
+            color: #ffffff;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        header h1 {
+            margin: 0;
+            font-size: 3em;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            border-right: .15em solid transparent;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: typing 4s steps(30, end), blink-caret 0.75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes blink-caret {
+            from, to { border-color: transparent; }
+            50% { border-color: white; }
+        }
+        header p {
+            margin: 10px 0 0;
+            font-size: 1.2em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        nav {
+            background: #3b4a66;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.2em;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        section {
+            padding: 20px;
+            text-align: center;
+            margin: 20px;
+            border: 5px solid transparent;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        section:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+        }
+        footer {
+            background: #2e3a4e;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+        footer img {
+            width: 100px;
+            height: auto;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        .content-with-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+        .content-with-image img {
+            width: 400px;
+            height: 400px;
+            border-radius: 10px;
+        }
+        .left-image {
+            flex-direction: row-reverse;
+        }
+        .right-image {
+            flex-direction: row;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 40px 10px;
+            }
+            header h1 {
+                font-size: 2.5em;
+            }
+            nav {
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+            nav a {
+                margin: 5px 10px;
+                font-size: 1em;
+            }
+            .content-with-image {
+                flex-direction: column;
+            }
+            .content-with-image img {
+                width: 300px;
+                height: auto;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 2em;
+            }
+            header p {
+                font-size: 1em;
+            }
+            nav a {
+                font-size: 0.9em;
+            }
+            .content-with-image img {
+                width: 100%;
+                max-width: 250px;
+                height: auto;
+            }
+            .content-with-image {
+                gap: 10px;
+            }
+            section {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>XionXalpha</h1>
+        <p>Web Deployment & Game Creation Experts</p>
+    </header>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+    </nav>
+    <section id="home" class="content-with-image right-image">
+        <div>
+            <h2>Welcome to XionXalpha</h2>
+            <p>Talk to us for all your web and game-related needs.</p>
+        </div>
+        <img src="https://static.vecteezy.com/system/resources/thumbnails/015/733/512/small/wolf-is-divided-into-two-colors-white-and-red-gaming-logo-illustration-vector.jpg" alt="Wolf logo">
+    </section>
+    <section id="about" class="content-with-image left-image">
+        <div>
+            <h2>About Us</h2>
+            <p>XionXalpha specializes in innovative web deployment and engaging game creation. Our mission is to bring your ideas to life.</p>
+        </div>
+        <img src="https://t4.ftcdn.net/jpg/08/69/84/85/360_F_869848542_15AnloT2Q9VK9etgbH3o3bOa3Thiev6I.webp" alt="About logo">
+    </section>
+    <section id="services" class="content-with-image right-image">
+        <div>
+            <h2>Our Services</h2>
+            <p>- Custom Web Development<br>- Game Design & Development<br>- Interactive UI/UX Solutions</p>
+        </div>
+        <img src="https://static.vecteezy.com/system/resources/thumbnails/005/144/611/small/superhero-mascot-logo-gaming-illustration-superhero-free-vector.jpg" alt="Services logo">
+    </section>
+    <section id="contact" class="content-with-image left-image">
+        <div>
+            <h2>Contact Us</h2>
+            <p>Email: xionxalpha@gmail.com<br>Phone: +94-789088223</p>
+        </div>
+        <img src="https://static.vecteezy.com/system/resources/thumbnails/023/288/132/small/angry-dragon-logo-design-modern-game-style-simple-illustration-vector.jpg" alt="Contact logo">
+    </section>
+    <footer>
+        <p>© 2024 XionXalpha. All rights reserved.</p>
+        <img src="https://static.vecteezy.com/system/resources/thumbnails/023/498/454/small/game-over-screen-digital-glitch-background-vector.jpg" 
+             alt="Footer Image">
+    </footer>
+</body>
+</html>
